@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package storage;
+option go_package = "internal/proto;proto";
+
+service StorageService {
+  rpc WriteVideo(WriteRequest) returns (WriteResponse);
+  rpc ReadVideo(ReadRequest) returns (ReadResponse);
+  rpc ListFiles(ListRequest) returns (ListResponse);
+}
+
+message WriteRequest {
+  string videoId = 1;
+  string filename = 2;
+  bytes content = 3;
+}
+
+message ReadRequest {
+  string videoId = 1;
+  string filename = 2;
+}
+
+message WriteResponse {
+    string status = 1;
+}
+
+message ReadResponse {
+    string status = 1;
+    bytes content = 2;
+}
+message ListRequest {}
+
+message File {
+  string videoId = 1;
+  string filename = 2;
+}
+message ListResponse {
+  repeated File filesList = 1;
+}

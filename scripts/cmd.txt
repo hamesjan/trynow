@@ -1,0 +1,15 @@
+mkdir -p storage/8090 storage/8091 storage/8092
+
+go run ./cmd/storage -port 8090 "./storage/8090" # storage 8090
+go run ./cmd/storage -port 8091 "./storage/8091" # storage 8091
+go run ./cmd/storage -port 8092 "./storage/8092" # storage 8092
+
+go run ./cmd/web \
+    sqlite "./metadata.db" \
+    nw     "localhost:8081,localhost:8090,localhost:8091,localhost:8092"
+
+
+go run ./cmd/admin list localhost:8081
+go run ./cmd/admin remove localhost:8081 localhost:8090
+go run ./cmd/admin add localhost:8081 localhost:8090
+
