@@ -19,9 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	StorageService_WriteVideo_FullMethodName = "/storage.StorageService/WriteVideo"
-	StorageService_ReadVideo_FullMethodName  = "/storage.StorageService/ReadVideo"
-	StorageService_ListFiles_FullMethodName  = "/storage.StorageService/ListFiles"
+	StorageService_WriteVideo_FullMethodName     = "/storage.StorageService/WriteVideo"
+	StorageService_ReadVideo_FullMethodName      = "/storage.StorageService/ReadVideo"
+	StorageService_ListFiles_FullMethodName      = "/storage.StorageService/ListFiles"
+	StorageService_RemoveAllFiles_FullMethodName = "/storage.StorageService/RemoveAllFiles"
+	StorageService_DeleteVideo_FullMethodName    = "/storage.StorageService/DeleteVideo"
 )
 
 // StorageServiceClient is the client API for StorageService service.
@@ -31,6 +33,8 @@ type StorageServiceClient interface {
 	WriteVideo(ctx context.Context, in *WriteRequest, opts ...grpc.CallOption) (*WriteResponse, error)
 	ReadVideo(ctx context.Context, in *ReadRequest, opts ...grpc.CallOption) (*ReadResponse, error)
 	ListFiles(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
+	RemoveAllFiles(ctx context.Context, in *RemoveRequest, opts ...grpc.CallOption) (*RemoveResponse, error)
+	DeleteVideo(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 }
 
 type storageServiceClient struct {
@@ -71,6 +75,26 @@ func (c *storageServiceClient) ListFiles(ctx context.Context, in *ListRequest, o
 	return out, nil
 }
 
+func (c *storageServiceClient) RemoveAllFiles(ctx context.Context, in *RemoveRequest, opts ...grpc.CallOption) (*RemoveResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RemoveResponse)
+	err := c.cc.Invoke(ctx, StorageService_RemoveAllFiles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *storageServiceClient) DeleteVideo(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteResponse)
+	err := c.cc.Invoke(ctx, StorageService_DeleteVideo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StorageServiceServer is the server API for StorageService service.
 // All implementations must embed UnimplementedStorageServiceServer
 // for forward compatibility.
@@ -78,6 +102,8 @@ type StorageServiceServer interface {
 	WriteVideo(context.Context, *WriteRequest) (*WriteResponse, error)
 	ReadVideo(context.Context, *ReadRequest) (*ReadResponse, error)
 	ListFiles(context.Context, *ListRequest) (*ListResponse, error)
+	RemoveAllFiles(context.Context, *RemoveRequest) (*RemoveResponse, error)
+	DeleteVideo(context.Context, *DeleteRequest) (*DeleteResponse, error)
 	mustEmbedUnimplementedStorageServiceServer()
 }
 
@@ -96,6 +122,12 @@ func (UnimplementedStorageServiceServer) ReadVideo(context.Context, *ReadRequest
 }
 func (UnimplementedStorageServiceServer) ListFiles(context.Context, *ListRequest) (*ListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListFiles not implemented")
+}
+func (UnimplementedStorageServiceServer) RemoveAllFiles(context.Context, *RemoveRequest) (*RemoveResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveAllFiles not implemented")
+}
+func (UnimplementedStorageServiceServer) DeleteVideo(context.Context, *DeleteRequest) (*DeleteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteVideo not implemented")
 }
 func (UnimplementedStorageServiceServer) mustEmbedUnimplementedStorageServiceServer() {}
 func (UnimplementedStorageServiceServer) testEmbeddedByValue()                        {}
@@ -172,6 +204,42 @@ func _StorageService_ListFiles_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StorageService_RemoveAllFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StorageServiceServer).RemoveAllFiles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StorageService_RemoveAllFiles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StorageServiceServer).RemoveAllFiles(ctx, req.(*RemoveRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StorageService_DeleteVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StorageServiceServer).DeleteVideo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StorageService_DeleteVideo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StorageServiceServer).DeleteVideo(ctx, req.(*DeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // StorageService_ServiceDesc is the grpc.ServiceDesc for StorageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -190,6 +258,14 @@ var StorageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListFiles",
 			Handler:    _StorageService_ListFiles_Handler,
+		},
+		{
+			MethodName: "RemoveAllFiles",
+			Handler:    _StorageService_RemoveAllFiles_Handler,
+		},
+		{
+			MethodName: "DeleteVideo",
+			Handler:    _StorageService_DeleteVideo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

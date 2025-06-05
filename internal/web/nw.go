@@ -149,6 +149,13 @@ func (s *NetworkVideoContentService) addFilesToThisNode() int {
 				if err != nil {
 					continue
 				}
+				_, err = client.DeleteVideo(context.Background(), &pb.DeleteRequest{
+					VideoId:  file.VideoId,
+					Filename: file.Filename,
+				})
+				if err != nil {
+					log.Printf("Failed delete %v", err)
+				}
 				totalFilesMoved += 1
 			}
 		}
@@ -171,6 +178,7 @@ func (s *NetworkVideoContentService) RemoveNode(ctx context.Context, req *pb.Rem
 		return s.Nodes[i].Hash < s.Nodes[j].Hash
 	})
 	migratedCount := s.sendFilesOut(addr)
+
 	return &pb.RemoveNodeResponse{MigratedFileCount: int32(migratedCount)}, nil
 }
 
@@ -205,5 +213,10 @@ func (s *NetworkVideoContentService) sendFilesOut(addr string) int {
 		}
 		totalFilesMoved += 1
 	}
+	_, err = client.RemoveAllFiles(context.Background(), &pb.RemoveRequest{})
+	if err != nil {
+		log.Printf("Delet all fail %v", err)
+	}
+		
 	return totalFilesMoved
 }

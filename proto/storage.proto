@@ -7,6 +7,8 @@ service StorageService {
   rpc WriteVideo(WriteRequest) returns (WriteResponse);
   rpc ReadVideo(ReadRequest) returns (ReadResponse);
   rpc ListFiles(ListRequest) returns (ListResponse);
+  rpc RemoveAllFiles(RemoveRequest) returns (RemoveResponse);
+  rpc DeleteVideo(DeleteRequest) returns (DeleteResponse);
 }
 
 message WriteRequest {
@@ -36,4 +38,19 @@ message File {
 }
 message ListResponse {
   repeated File filesList = 1;
+}
+
+message RemoveRequest {}
+
+message RemoveResponse {
+  string status = 1;
+}
+
+message DeleteRequest {
+  string videoId = 1;
+  string filename = 2;
+}
+
+message DeleteResponse {
+  string status = 1;
 }

@@ -87,3 +87,24 @@ func (s *StorageService) ListFiles(ctx context.Context, req *pb.ListRequest) (*p
 	}
 	return &pb.ListResponse{FilesList: files}, nil
 }
+
+func (s *StorageService) RemoveAllFiles(ctx context.Context, req *pb.RemoveRequest) (*pb.RemoveResponse, error) {
+	err := os.RemoveAll(s.StorageDirectory)
+	if err != nil {
+		return &pb.RemoveResponse{Status: fmt.Sprintf("delete %v", err)}, err
+	}
+	err = os.MkdirAll(s.StorageDirectory, os.ModePerm)
+	if err != nil {
+		return &pb.RemoveResponse{Status: fmt.Sprintf("leave dir %v", err)}, err
+	}
+	return &pb.RemoveResponse{Status: "ok"}, nil
+}
+
+func (s *StorageService) DeleteVideo(ctx context.Context, req *pb.DeleteRequest) (*pb.DeleteResponse, error) {
+	fullPath := filepath.Join(s.StorageDirectory, req.VideoId, req.Filename)
+	err := os.Remove(fullPath)
+	if err != nil {
+		return &pb.DeleteResponse{Status: fmt.Sprintf("delete error: %v", err)}, err
+	}
+	return &pb.DeleteResponse{Status: "ok"}, nil
+}
