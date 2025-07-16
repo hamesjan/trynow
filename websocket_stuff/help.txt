@@ -1,0 +1,3 @@
+node websocket-relay.js supersecret 8081 8082
+
+dont forget to change ips if you restart ec2 instance
